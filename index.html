@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pegasus Shield - Cyber MVP</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        darkbg: '#05070f',
+                        cardbg: '#0a0f1d',
+                        bordercolor: '#1e293b'
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- CSS Externo -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-darkbg text-slate-200 font-sans antialiased min-h-screen relative flex flex-col justify-between">
+
+    <!-- Camada Scanline de Monitor CRT/Cyber -->
+    <div class="fixed inset-0 scanlines"></div>
+
+    <!-- Header Futurista com a sua Logo -->
+    <header class="border-b border-slate-800 bg-cardbg/90 backdrop-blur px-6 py-3 flex justify-between items-center sticky top-0 z-50">
+        <div class="flex items-center space-x-3">
+            <div class="bg-slate-900/80 border border-amber-500/30 p-1.5 rounded-lg flex items-center justify-center neon-border-gold">
+                <img src="logo.pegasus.png" alt="Pegasus Shield Logo" class="h-10 w-auto object-contain glow-logo">
+            </div>
+            <div>
+                <h1 class="text-xl font-black text-white tracking-widest font-mono uppercase bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-indigo-300 to-cyan-400">
+                    PEGASUS SHIELD
+                </h1>
+                <p class="text-[11px] text-slate-400 font-mono tracking-wider">CYBER MVP // ANTI-PHISHING & MAIL AUDITOR</p>
+            </div>
+        </div>
+        <div class="flex items-center space-x-3 font-mono">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
+            <span class="text-xs text-emerald-400 font-bold tracking-widest">SYSTEM ONLINE</span>
+        </div>
+    </header>
+
+    <!-- CONTAINER PRINCIPAL COM PAINÉIS LATERAIS -->
+    <div class="relative w-full flex-1 flex overflow-hidden min-h-[calc(100vh-73px)]">
+
+        <!-- LATERAL ESQUERDA: CÓDIGOS MALICIOSOS (VERMELHO) -->
+        <aside class="hidden xl:block w-72 relative border-r border-red-950/60 bg-red-950/10 overflow-hidden">
+            <canvas id="canvasMalicious" class="matrix-canvas"></canvas>
+            <div class="hud-overlay">
+                <div class="bg-red-950/80 border border-red-500/40 p-2.5 rounded text-[11px] text-red-400 font-mono neon-border-red">
+                    <p class="font-bold flex items-center gap-1.5 animate-pulse-fast">
+                        <span>⚠️</span> MALWARE STREAM
+                    </p>
+                    <p class="text-[9px] text-red-300/70 mt-1">Monitorando vetores de ataque & typosquatting...</p>
+                </div>
+                <div class="bg-red-950/90 border border-red-600/50 p-2 rounded text-[10px] text-red-400 font-mono space-y-1">
+                    <p>[!] SPOOFING DETECTED</p>
+                    <p>[!] LEET_CHAR_INJECTION</p>
+                    <p>[!] DOMAIN_IMPERSONATION</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- CENTRO: INTERFACE PRINCIPAL DO SISTEMA -->
+        <main class="flex-1 max-w-5xl mx-auto p-6 space-y-6 z-10 relative">
+
+            <!-- Métricas em Tempo Real -->
+            <section class="grid grid-cols-1 md:grid-cols-4 gap-4 font-mono">
+                <div class="bg-cardbg/80 border border-slate-800 p-4 rounded-xl">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total de Checagens</p>
+                    <h3 class="text-2xl font-black text-white mt-1" id="statTotal">0</h3>
+                </div>
+                <div class="bg-cardbg/80 border border-red-900/40 p-4 rounded-xl">
+                    <p class="text-[10px] font-bold text-red-400 uppercase tracking-wider">Bloqueados / Inválidos</p>
+                    <h3 class="text-2xl font-black text-red-500 mt-1" id="statErros">0</h3>
+                </div>
+                <div class="bg-cardbg/80 border border-amber-900/40 p-4 rounded-xl">
+                    <p class="text-[10px] font-bold text-amber-400 uppercase tracking-wider">Phishing / Leetspeak</p>
+                    <h3 class="text-2xl font-black text-amber-500 mt-1" id="statPhishing">0</h3>
+                </div>
+                <div class="bg-cardbg/80 border border-emerald-900/40 p-4 rounded-xl">
+                    <p class="text-[10px] font-bold text-emerald-400 uppercase tracking-wider">E-mails Legítimos</p>
+                    <h3 class="text-2xl font-black text-emerald-500 mt-1" id="statValidos">0</h3>
+                </div>
+            </section>
+
+            <!-- Formulário de Teste -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2 bg-cardbg/90 border border-slate-800 rounded-xl p-6 space-y-5 backdrop-blur">
+                    <div>
+                        <h2 class="text-base font-bold text-white flex items-center gap-2 font-mono uppercase tracking-wider">
+                            <span class="text-blue-400">⚡</span> Testar Validação de E-mail / Domínio
+                        </h2>
+                        <p class="text-xs text-slate-400 mt-1">Digite qualquer e-mail para checar sintaxe, digitação incorreta e domínios suspeitos.</p>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-mono text-slate-300">Endereço de E-mail para Validação</label>
+                        <input type="email" id="emailInput" class="w-full bg-slate-950/80 border border-slate-700 focus:border-blue-500 rounded-lg p-3 text-sm text-slate-100 placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-blue-500 font-mono transition-all" placeholder="Ex: teste@gmai.com, contato@empresa.com, sup0rte-b@nc0.com.br">
+                    </div>
+
+                    <div class="flex gap-2 font-mono text-xs">
+                        <button onclick="validarEmail()" class="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold py-3 px-4 rounded-lg transition-all duration-200 flex justify-center items-center gap-2 shadow-lg shadow-blue-600/20">
+                            <span>⚡</span> VALIDAR E-MAIL
+                        </button>
+                        <button onclick="carregarExemploInvalido()" class="bg-slate-900 hover:bg-slate-800 text-slate-300 px-4 rounded-lg border border-slate-700 transition">
+                            Exemplo com Erro
+                        </button>
+                    </div>
+
+                    <!-- Painel de Resultado -->
+                    <div id="resultCard" class="hidden p-5 rounded-lg border space-y-3 font-mono transition-all">
+                        <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+                            <span id="statusBadge" class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide"></span>
+                            <span id="riskScore" class="text-xs font-bold text-slate-400">Score de Risco: 0/100</span>
+                        </div>
+
+                        <div id="statusMessage" class="text-sm font-semibold"></div>
+
+                        <div class="space-y-1.5">
+                            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">CHECKLIST DA AUDITORIA:</p>
+                            <ul id="auditList" class="text-xs space-y-1 font-mono"></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Regras de Funcionalidade -->
+                <div class="bg-cardbg/90 border border-slate-800 rounded-xl p-6 space-y-4 backdrop-blur font-mono">
+                    <h3 class="text-xs font-bold text-white uppercase tracking-wider border-b border-slate-800 pb-3">Como a Validação Funciona</h3>
+
+                    <div class="space-y-3 text-xs">
+                        <div class="p-3 bg-slate-950/60 rounded border border-slate-800">
+                            <p class="font-bold text-blue-400">1. Sintaxe RFC 5322</p>
+                            <p class="text-slate-400 text-[11px] mt-1">Valida caracteres permitidos, múltiplos @ e estrutura do TLD.</p>
+                        </div>
+
+                        <div class="p-3 bg-slate-950/60 rounded border border-slate-800">
+                            <p class="font-bold text-amber-400">2. Leetspeak & Spoofing</p>
+                            <p class="text-slate-400 text-[11px] mt-1">Identifica trocas de caracteres como g00gle.com, b@nc0.com.br ou sup0rte.</p>
+                        </div>
+
+                        <div class="p-3 bg-slate-950/60 rounded border border-slate-800">
+                            <p class="font-bold text-emerald-400">3. Consulta DNS MX Real</p>
+                            <p class="text-slate-400 text-[11px] mt-1">Consulta o servidor de DNS do Google para checar se o domínio possui servidores MX ativos.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabela de Histórico -->
+            <section class="bg-cardbg/90 border border-slate-800 rounded-xl p-6 backdrop-blur">
+                <h3 class="text-sm font-bold text-white mb-4 flex items-center gap-2 font-mono uppercase tracking-wider">
+                    <span>📋</span> Histórico de Auditoria da Sessão
+                </h3>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs text-slate-300">
+                        <thead class="bg-slate-950 uppercase text-[10px] font-bold text-slate-400 border-b border-slate-800 font-mono">
+                            <tr>
+                                <th class="py-3 px-4">Horário</th>
+                                <th class="py-3 px-4">E-mail Digitado</th>
+                                <th class="py-3 px-4">Domínio Extraído</th>
+                                <th class="py-3 px-4">Diagnóstico</th>
+                                <th class="py-3 px-4">Score</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTableBody" class="divide-y divide-slate-800/60 font-mono">
+                            <tr id="emptyRow">
+                                <td colspan="5" class="py-4 text-center text-slate-500 italic">Nenhum e-mail testado ainda. Digite um e-mail acima para iniciar.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- LATERAL DIREITA: CÓDIGOS SEGUROS (VERDE) -->
+        <aside class="hidden xl:block w-72 relative border-l border-emerald-950/60 bg-emerald-950/10 overflow-hidden">
+            <canvas id="canvasSecure" class="matrix-canvas"></canvas>
+            <div class="hud-overlay">
+                <div class="bg-emerald-950/80 border border-emerald-500/40 p-2.5 rounded text-[11px] text-emerald-400 font-mono neon-border-green">
+                    <p class="font-bold flex items-center gap-1.5 animate-pulse-fast">
+                        <span>🛡️</span> SECURE STREAM
+                    </p>
+                    <p class="text-[9px] text-emerald-300/70 mt-1">Validando conexões seguras & registros MX...</p>
+                </div>
+                <div class="bg-emerald-950/90 border border-emerald-600/50 p-2 rounded text-[10px] text-emerald-400 font-mono space-y-1">
+                    <p>[✓] MX_RECORD_VALID</p>
+                    <p>[✓] RFC5322_PASSED</p>
+                    <p>[✓] ENCRYPTION_ACTIVE</p>
+                </div>
+            </div>
+        </aside>
+
+    </div>
+
+    <!-- JS Externo -->
+    <script src="script.js"></script>
+</body>
+</html>
