@@ -169,8 +169,8 @@ Este é um MVP com finalidade educacional. Ele não substitui soluções profiss
 
 - Marcus Faria — [@Mrqunhss](https://github.com/Mrqunhss)
 - Vinicius Rodrigues — [@viniciusrodrigues2008](https://github.com/viniciusrodrigues2008)
-- Victor Camacho — [@WV2307](https://https://github.com/WV2307)
-- Lucas Ribeiro — [@lucasdevv25](https://https://github.com/lucasdevv25)
+- Victor Camacho — [@WV2307](https://github.com/WV2307)
+- Lucas Ribeiro — [@lucasdevv25](https://github.com/lucasdevv25)
 - Jonathan duarte — [@Jonathanduarte9832](https://github.com/@Jonathanduarte9832)
 
 Projeto desenvolvido no contexto acadêmico — UNIFESO.
