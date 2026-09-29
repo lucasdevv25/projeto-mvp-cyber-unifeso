@@ -171,7 +171,7 @@ Este é um MVP com finalidade educacional. Ele não substitui soluções profiss
 - Vinicius Rodrigues — [@viniciusrodrigues2008](https://github.com/viniciusrodrigues2008)
 - Victor Camacho — [@WV2307](https://github.com/WV2307)
 - Lucas Ribeiro — [@lucasdevv25](https://github.com/lucasdevv25)
-- Jonathan duarte — [@Jonathanduarte9832-cyber](https://github.com/@Jonathanduarte9832-cyber)
+- Jonathan duarte — [@jonathanduarte9832-cyber](https://github.com/@jonathanduarte9832-cyber)
 
 Projeto desenvolvido no contexto acadêmico — UNIFESO.
 
