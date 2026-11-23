@@ -16,6 +16,8 @@ const estatisticas = {
     site: { total: 0, validos: 0, invalidos: 0 }
 };
 
+const historico = carregar('historico', { email: [], senha: [], site: []});
+
 botoes.forEach(botao => {
     botao.addEventListener('click', () => {
 
@@ -28,6 +30,16 @@ botoes.forEach(botao => {
 
     });
 });
+
+
+function salvar(chave, valor) {
+    localStorage.setItem(chave, JSON.stringify(valor));
+}
+
+function carregar(chave, padrao) {
+    const guardado = localStorage.getItem(chave);
+    return guardado ? JSON.parse(guardado) : padrao;
+}
 
 function verificarEmail(v) {
 
@@ -89,6 +101,18 @@ function atualizarEstatisticas(tipo, resultado) {
 
 }
 
+function adicionarItemNaTela(tipo, entrada) {
+
+    const lista = document.querySelector('#modo-' + tipo + ' .historico-lista');
+
+    const item = document.createElement('li');
+
+    item.textContent =  entrada.valor + ' - ' + entrada.texto;
+
+    lista.prepend(item);
+
+}
+
 document.querySelectorAll('form[data-tipo]').forEach(form => {
 
     form.addEventListener('submit', (e) => {
@@ -110,15 +134,20 @@ document.querySelectorAll('form[data-tipo]').forEach(form => {
         divResultado.textContent = resultado.texto;
         divResultado.className = 'resultado ' + (resultado.ok ? 'ok' : 'ruim');
 
+        const lista = form.closest('section').querySelector('.historico-lista');   
+        const item = document.createElement('li');                                 
+        item.textContent = valor + ' — ' + resultado.texto;                        
+        lista.prepend(item);                                                       
+        
+        const entrada = {
+        valor: tipo === 'senha' ? '•'.repeat(valor.length) : valor,
+        texto: resultado.texto
+        };
 
-        const lista = form.closest('section').querySelector('.historico-lista');
+        adicionarItemNaTela(tipo, entrada);
 
-        const item = document.createElement('li');
-
-        item.textContent = valor + ' — ' + resultado.texto;
-
-        lista.prepend(item);
-
+        historico[tipo].push(entrada);
+        salvar('historico', historico);
         input.value = '';
 
     });
@@ -145,5 +174,9 @@ botaoTema.addEventListener('click', () => {
 
     }
 
+});
+
+['email', 'senha', 'site'].forEach(tipo => {
+    historico[tipo].forEach(entrada => adicionarItemNaTela(tipo, entrada));
 });
 
