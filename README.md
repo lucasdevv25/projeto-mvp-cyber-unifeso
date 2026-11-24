@@ -1,6 +1,6 @@
 <div>
 
-#  SecuryTry
+#  SecuriTry
 
 ### Anti-Phishing & Mail Auditor — Cyber MVP
 
@@ -18,7 +18,7 @@ Ferramenta web para **verificar e-mails suspeitos** (phishing, spoofing e golpes
 
 Golpes por e-mail estão entre as formas mais comuns de fraude online. Criminosos criam endereços que **imitam empresas, bancos e provedores conhecidos** (por exemplo `sup0rte@b@nc0.com.br`) para enganar vítimas e roubar dados, senhas e dinheiro.
 
-O **SecuryTry** é um MVP (Produto Mínimo Viável) que analisa um endereço de e-mail digitado pelo usuário e devolve, em segundos:
+O **SecuriTry** é um MVP (Produto Mínimo Viável) que analisa um endereço de e-mail digitado pelo usuário e devolve, em segundos:
 
 - um diagnóstico (Válido, Suspeito ou Inválido/Ameaça);
 - um score de risco de 0 a 100;
@@ -178,7 +178,7 @@ Projeto desenvolvido no contexto acadêmico — UNIFESO.
 
 <div align="center">
 
-** SecuryTry ** — *Pense antes de clicar.*
+** SecuriTry ** — *Pense antes de clicar.*
 
 </div>
 
