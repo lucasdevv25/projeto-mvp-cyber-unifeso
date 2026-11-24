@@ -1,6 +1,6 @@
 <div>
 
-#  Pegasus Shield
+#  SecuryTry
 
 ### Anti-Phishing & Mail Auditor — Cyber MVP
 
@@ -9,7 +9,6 @@ Ferramenta web para **verificar e-mails suspeitos** (phishing, spoofing e golpes
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white).
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white).
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black).
-![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white).
 
 </div>
 
@@ -19,7 +18,7 @@ Ferramenta web para **verificar e-mails suspeitos** (phishing, spoofing e golpes
 
 Golpes por e-mail estão entre as formas mais comuns de fraude online. Criminosos criam endereços que **imitam empresas, bancos e provedores conhecidos** (por exemplo `sup0rte@b@nc0.com.br`) para enganar vítimas e roubar dados, senhas e dinheiro.
 
-O **Pegasus Shield** é um MVP (Produto Mínimo Viável) que analisa um endereço de e-mail digitado pelo usuário e devolve, em segundos:
+O **SecuryTry** é um MVP (Produto Mínimo Viável) que analisa um endereço de e-mail digitado pelo usuário e devolve, em segundos:
 
 - um diagnóstico (Válido, Suspeito ou Inválido/Ameaça);
 - um score de risco de 0 a 100;
@@ -179,6 +178,18 @@ Projeto desenvolvido no contexto acadêmico — UNIFESO.
 
 <div align="center">
 
-** Pegasus Shield ** — *Pense antes de clicar.*
+** SecuryTry ** — *Pense antes de clicar.*
 
 </div>
+
+## Correção adicional (24/11/2026)
+- Corrigido o seletor CSS para `.campo-com-icone .icone-campo` e `.campo-com-icone input` (o seletor anterior estava incorreto e por isso as regras não eram aplicadas).
+- O campo agora usa Flexbox com `align-items: center` e `gap`, mantendo o ícone quadrado ao lado do texto e centralizado verticalmente.
+- O campo de senha usa `type="text"` para exibir o que é digitado.
+
+
+## Ajustes solicitados — histórico e ícones
+- `JS/JS_SecuriTry.js`: o histórico agora salva o valor real digitado no campo de senha e exibe esse valor no histórico, em vez de substituir por bolinhas.
+- `CSS/CSS_SecuriTry.css`: os campos de e-mail, senha e site agora usam Grid para manter o quadrado do ícone e o texto alinhados na mesma linha e centralizados verticalmente.
+- Senhas verificadas em versões anteriores foram gravadas apenas como `••••••••`; não é possível recuperar os caracteres originais desses registros. As novas verificações aparecerão com a senha digitada.
+- Atenção: o histórico passará a guardar senhas em texto visível no armazenamento local do navegador. Use apenas em ambiente de demonstração e não com senhas reais.

@@ -1,14 +1,19 @@
 
-const botoes = document.querySelectorAll('nav button');
-const secoes = document.querySelectorAll('.modo');
-const botaoTema = document.getElementById('alternar-tema');
-const logo = document.getElementById('logo');
+const $ = (seletor, contexto = document) =>
+    contexto.querySelector(seletor);
 
-const verificadores = {
-    email: verificarEmail,
-    senha: verificarSenha,
-    site: verificarSite
-};
+const $$ = (seletor, contexto = document) =>
+    [...contexto.querySelectorAll(seletor)];
+
+const botoes = $$('nav button[data-mode]');
+const secoes = $$('.modo');
+const botaoTema = $('#alternar-tema');
+const logo = $('#logo');
+
+const TIPOS = ['email', 'senha', 'site'];
+
+const CHAVE_HISTORICO = 'historico';
+const CHAVE_TEMA = 'tema';
 
 const estatisticas = {
     email: { total: 0, validos: 0, invalidos: 0 },
@@ -16,75 +21,134 @@ const estatisticas = {
     site: { total: 0, validos: 0, invalidos: 0 }
 };
 
-const historico = carregar('historico', { email: [], senha: [], site: []});
-
-botoes.forEach(botao => {
-    botao.addEventListener('click', () => {
-
-        botoes.forEach(b => b.classList.remove('ativo'));
-        secoes.forEach(s => s.classList.remove('ativo'));
-
-        botao.classList.add('ativo');
-
-        document.getElementById('modo-' + botao.dataset.mode).classList.add('ativo');
-
-    });
-});
-
+function carregar(chave, padrao) {
+    try {
+        const dado = localStorage.getItem(chave);
+        return dado === null ? padrao : JSON.parse(dado);
+    } catch (erro) {
+        console.error('Erro ao carregar dados:', erro);
+        return padrao;
+    }
+}
 
 function salvar(chave, valor) {
-    localStorage.setItem(chave, JSON.stringify(valor));
+    try {
+        localStorage.setItem(chave, JSON.stringify(valor));
+    } catch (erro) {
+        console.error('Erro ao salvar dados:', erro);
+    }
 }
 
-function carregar(chave, padrao) {
-    const guardado = localStorage.getItem(chave);
-    return guardado ? JSON.parse(guardado) : padrao;
-}
-
-function verificarEmail(v) {
-
-    const ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+function verificarEmail(valor) {
+    const valido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(valor);
 
     return {
-        ok,
-        texto: ok ? 'E-mail com formato válido.' : 'Formato de e-mail inválido.'
+        ok: valido,
+        texto: valido
+            ? 'E-mail com formato válido.'
+            : 'Formato de e-mail inválido.'
     };
-
 }
 
-function verificarSenha(v) {
-
+function verificarSenha(valor) {
     let pontos = 0;
 
-    if (v.length >= 8) pontos++;
-    if (/[A-Z]/.test(v)) pontos++;
-    if (/[0-9]/.test(v)) pontos++;
-    if (/[^A-Za-z0-9]/.test(v)) pontos++;
+    if (valor.length >= 8) pontos++;
+    if (/[A-Z]/.test(valor)) pontos++;
+    if (/[0-9]/.test(valor)) pontos++;
+    if (/[^A-Za-z0-9]/.test(valor)) pontos++;
 
-    const niveis = ['Muito fraca', 'Fraca', 'Média', 'Forte', 'Muito forte'];
-
-    const ok = pontos >= 3;
+    const niveis = [
+        'Muito fraca',
+        'Fraca',
+        'Média',
+        'Forte',
+        'Muito forte'
+    ];
 
     return {
-        ok,
-        texto: 'Força: ' + niveis[pontos]
+        ok: pontos >= 3,
+        texto: 'Força da senha: ' + niveis[pontos]
     };
-
 }
 
-function verificarSite(v) {
+function verificarSite(valor) {
+    const endereco = valor.trim();
 
-    const ok = /^https:\/\//i.test(v.trim());
+    let valido = false;
+
+    try {
+        const url = new URL(endereco);
+        valido = url.protocol === 'https:';
+    } catch (erro) {
+        valido = false;
+    }
 
     return {
-        ok,
-        texto: ok ? 'URL usa HTTPS.' : 'URL não usa HTTPS ou está incompleta.'
+        ok: valido,
+        texto: valido
+            ? 'Site utiliza conexão HTTPS.'
+            : 'URL inválida ou sem conexão HTTPS.'
     };
+}
 
+const verificadores = {
+    email: verificarEmail,
+    senha: verificarSenha,
+    site: verificarSite
+};
+
+function normalizarEntrada(entrada, tipo) {
+    if (typeof entrada === 'string') {
+        return {
+            valor: entrada,
+            texto: '',
+            ok: false,
+            dataHora: ''
+        };
+    }
+
+    if (!entrada || typeof entrada !== 'object') {
+        return null;
+    }
+
+    const resultado = entrada.ok ??
+        entrada.valido ??
+        entrada.validado ??
+        entrada.status === 'válido';
+
+    const dataHora =
+        entrada.dataHora ||
+        entrada.data ||
+        entrada.horario ||
+        '';
+
+    return {
+        valor: String(entrada.valor ?? entrada.email ?? entrada.site ?? ''),
+        texto: String(entrada.texto ?? entrada.mensagem ?? ''),
+        ok: Boolean(resultado),
+        dataHora
+    };
+}
+
+const dadosSalvos = carregar(CHAVE_HISTORICO, {});
+
+const historico = Object.fromEntries(
+    TIPOS.map(tipo => [
+        tipo,
+        Array.isArray(dadosSalvos[tipo])
+            ? dadosSalvos[tipo]
+                .map(item => normalizarEntrada(item, tipo))
+                .filter(Boolean)
+            : []
+    ])
+);
+
+function salvarHistorico() {
+    salvar(CHAVE_HISTORICO, historico);
 }
 
 function atualizarEstatisticas(tipo, resultado) {
-
     const dados = estatisticas[tipo];
 
     dados.total++;
@@ -95,88 +159,233 @@ function atualizarEstatisticas(tipo, resultado) {
         dados.invalidos++;
     }
 
-    document.getElementById(tipo + '-total').textContent = dados.total;
-    document.getElementById(tipo + '-validos').textContent = dados.validos;
-    document.getElementById(tipo + '-invalidos').textContent = dados.invalidos;
+    mostrarEstatisticas(tipo);
+}
 
+function mostrarEstatisticas(tipo) {
+    const dados = estatisticas[tipo];
+
+    const total = $('#' + tipo + '-total');
+    const validos = $('#' + tipo + '-validos');
+    const invalidos = $('#' + tipo + '-invalidos');
+
+    if (total) total.textContent = dados.total;
+    if (validos) validos.textContent = dados.validos;
+    if (invalidos) invalidos.textContent = dados.invalidos;
+}
+
+function reconstruirEstatisticas() {
+    TIPOS.forEach(tipo => {
+        historico[tipo].forEach(entrada => {
+            const dados = estatisticas[tipo];
+
+            dados.total++;
+
+            if (entrada.ok) {
+                dados.validos++;
+            } else {
+                dados.invalidos++;
+            }
+        });
+
+        mostrarEstatisticas(tipo);
+    });
 }
 
 function adicionarItemNaTela(tipo, entrada) {
+    const lista = $('#modo-' + tipo + ' .historico-lista');
 
-    const lista = document.querySelector('#modo-' + tipo + ' .historico-lista');
+    if (!lista) return;
 
     const item = document.createElement('li');
 
-    item.textContent =  entrada.valor + ' - ' + entrada.texto;
+    item.className = 'historico-item';
+
+    if (!entrada.ok) {
+        item.classList.add('historico-invalido');
+    }
+
+    const icone = document.createElement('span');
+
+    icone.className = 'historico-icone';
+
+    if (tipo === 'email') {
+        icone.textContent = '✉';
+    } else if (tipo === 'senha') {
+        icone.textContent = '♙';
+    } else {
+        icone.textContent = '◎';
+    }
+
+    const valor = document.createElement('span');
+
+    valor.className = 'historico-valor';
+
+    valor.textContent = entrada.valor;
+
+    const selo = document.createElement('span');
+
+    selo.className = 'status-badge ' +
+        (entrada.ok ? 'status-valido' : 'status-invalido');
+
+    selo.textContent = entrada.ok ? 'Válido' : 'Inválido';
+
+    const horario = document.createElement('time');
+
+    horario.className = 'historico-horario';
+
+    const data = new Date(entrada.dataHora);
+
+    if (entrada.dataHora && !Number.isNaN(data.getTime())) {
+        horario.textContent =
+            data.toLocaleDateString('pt-BR') +
+            ' · ' +
+            data.toLocaleTimeString('pt-BR', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+    } else {
+        horario.textContent = 'Data não registrada';
+    }
+
+    item.append(icone, valor, selo, horario);
 
     lista.prepend(item);
-
 }
 
-document.querySelectorAll('form[data-tipo]').forEach(form => {
+function mostrarResultado(form, resultado) {
+    const area = $('.resultado', form);
 
-    form.addEventListener('submit', (e) => {
+    if (!area) return;
 
-        e.preventDefault();
+    area.replaceChildren();
+
+    area.className = 'resultado ' +
+        (resultado.ok ? 'ok' : 'ruim');
+
+    const icone = document.createElement('span');
+
+    icone.className = 'resultado-icone';
+
+    icone.textContent = resultado.ok ? '✓' : '✕';
+
+    const mensagem = document.createElement('span');
+
+    mensagem.textContent = resultado.texto;
+
+    area.append(icone, mensagem);
+}
+
+botoes.forEach(botao => {
+    botao.addEventListener('click', () => {
+        botoes.forEach(item => {
+            item.classList.remove('ativo');
+        });
+
+        secoes.forEach(secao => {
+            secao.classList.remove('ativo');
+        });
+
+        botao.classList.add('ativo');
+
+        const modo = $('#modo-' + botao.dataset.mode);
+
+        if (modo) {
+            modo.classList.add('ativo');
+        }
+    });
+});
+
+$$('form[data-tipo]').forEach(form => {
+    form.addEventListener('submit', evento => {
+        evento.preventDefault();
 
         const tipo = form.dataset.tipo;
-        const input = form.querySelector('input');
+
+        const input = $('input', form);
+
+        if (!input) return;
+
         const valor = input.value.trim();
 
-        if (!valor) return;
+        if (!valor || !verificadores[tipo]) {
+            return;
+        }
 
         const resultado = verificadores[tipo](valor);
 
         atualizarEstatisticas(tipo, resultado);
 
-        const divResultado = form.querySelector('.resultado');
+        mostrarResultado(form, resultado);
 
-        divResultado.textContent = resultado.texto;
-        divResultado.className = 'resultado ' + (resultado.ok ? 'ok' : 'ruim');
-
-        const lista = form.closest('section').querySelector('.historico-lista');   
-        const item = document.createElement('li');                                 
-        item.textContent = valor + ' — ' + resultado.texto;                        
-        lista.prepend(item);                                                       
-        
         const entrada = {
-        valor: tipo === 'senha' ? '•'.repeat(valor.length) : valor,
-        texto: resultado.texto
+            valor: valor,
+
+            texto: resultado.texto,
+            ok: resultado.ok,
+            dataHora: new Date().toISOString()
         };
+
+        historico[tipo].unshift(entrada);
+
+        salvarHistorico();
 
         adicionarItemNaTela(tipo, entrada);
 
-        historico[tipo].push(entrada);
-        salvar('historico', historico);
         input.value = '';
-
     });
-
 });
 
-botaoTema.addEventListener('click', () => {
+function aplicarTema(tema) {
+    const claro = tema === 'claro';
 
-    const temaAtual = document.documentElement.dataset.tema;
+    document.documentElement.dataset.tema =
+        claro ? 'claro' : 'escuro';
 
-    if (temaAtual === 'claro') {
-
-        document.documentElement.dataset.tema = 'escuro';
-        botaoTema.textContent = '☀️ Tema claro';
-
-        logo.src = "Imagens/Securitry_Logo_Horizontal_Escuro.png";
-
-    } else {
-
-        document.documentElement.dataset.tema = 'claro';
-        botaoTema.textContent = '🌙 Tema escuro';
-
-        logo.src = "Imagens/Securitry_Logo_Horizontal_Claro.png";
-
+    if (botaoTema) {
+        botaoTema.textContent = claro
+            ? '🌙 Tema escuro'
+            : '☀️ Tema claro';
     }
 
+    if (logo) {
+        logo.src = claro
+            ? 'Imagens/Securitry_Logo_Horizontal_Claro.png'
+            : 'Imagens/Securitry_Logo_Horizontal_Escuro.png';
+    }
+}
+
+if (botaoTema) {
+    botaoTema.addEventListener('click', () => {
+        const temaAtual =
+            document.documentElement.dataset.tema;
+
+        const novoTema = temaAtual === 'claro'
+            ? 'escuro'
+            : 'claro';
+
+        aplicarTema(novoTema);
+
+        salvar(CHAVE_TEMA, novoTema);
+    });
+}
+
+TIPOS.forEach(tipo => {
+    const lista = $('#modo-' + tipo + ' .historico-lista');
+
+    if (lista) {
+        lista.replaceChildren();
+    }
+
+    historico[tipo].forEach(entrada => {
+        adicionarItemNaTela(tipo, entrada);
+    });
 });
 
-['email', 'senha', 'site'].forEach(tipo => {
-    historico[tipo].forEach(entrada => adicionarItemNaTela(tipo, entrada));
-});
+reconstruirEstatisticas();
 
+const temaSalvo = carregar(CHAVE_TEMA, 'escuro');
+
+aplicarTema(temaSalvo === 'claro' ? 'claro' : 'escuro');
+
+salvarHistorico();
