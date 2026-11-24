@@ -17,9 +17,9 @@
     <header>
 
         <div class="topo-header">
-            <img id="logo" src="Imagens/Securitry_Logo_Horizontal_Escuro.png" alt="Logo">
-            <h1>SecuriTry</h1>
-            <button id="alternar-tema">☀️ Tema claro</button>
+            <img id="logo" src="Imagens/Securitry_Logo_Horizontal_Escuro.png" alt="SecuriTry - Segurança na internet">
+            <h1 class="titulo-acessivel">SecuriTry</h1>
+            <button id="alternar-tema" type="button">☀️ Tema claro</button>
         </div>
 
         <nav id="nav">
@@ -66,7 +66,7 @@
 
                 <div class="container-formulario">
                     <form data-tipo="email">
-                        <input type="text" placeholder="Digite o E-mail:" required>
+                        <div class="campo-com-icone"><span class="icone-campo" aria-hidden="true">✉</span><input type="text" placeholder="Digite o E-mail:" required></div>
                         <button type="submit">Verificar</button>
                         <div class="resultado"></div>
                     </form>
@@ -81,7 +81,7 @@
 
                 <div class="container-formulario">
                     <form data-tipo="senha">
-                        <input type="password" placeholder="Digite a Senha:" required>
+                        <div class="campo-com-icone"><span class="icone-campo" aria-hidden="true">♙</span><input type="password" placeholder="Digite a Senha:" required></div>
                         <button type="submit">Verificar</button>
                         <div class="resultado"></div>
                     </form>
@@ -96,7 +96,7 @@
 
                 <div class="container-formulario">
                     <form data-tipo="site">
-                        <input type="text" placeholder="Digite a URL do site:" required>
+                        <div class="campo-com-icone"><span class="icone-campo" aria-hidden="true">◎</span><input type="text" placeholder="Digite a URL do site:" required></div>
                         <button type="submit">Verificar</button>
                         <div class="resultado"></div>
                     </form>
